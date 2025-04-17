@@ -34,6 +34,7 @@ jobs:
       - name: Deploy Frontend to S3
         run: |
           aws s3 sync frontend/build s3://${{ secrets.S3_BUCKET_NAME }} --delete
+          echo "CloudFront Distribution ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
