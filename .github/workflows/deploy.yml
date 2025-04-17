@@ -64,7 +64,7 @@ jobs:
       # 🚀 Deploy Backend to AWS Lambda
       - name: Deploy Backend to AWS Lambda
         run: |
-          aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --zip-file fileb://backend/backend.zip
+          aws lambda update-function-code --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} --zip-file fileb://backend/backend.zip
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
