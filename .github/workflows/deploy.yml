@@ -44,7 +44,7 @@ jobs:
       # 🔄 Invalidate CloudFront Cache
       - name: Invalidate CloudFront Cache
         run: |
-          aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -61,7 +61,7 @@ jobs:
           cd backend
           zip -r backend.zip .
 
-      # 🚀 Deploy Backend to Lambda
+      # 🚀 Deploy Backend to AWS Lambda
       - name: Deploy Backend to AWS Lambda
         run: |
           aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --zip-file fileb://backend/backend.zip
