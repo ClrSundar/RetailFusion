@@ -1,0 +1,32 @@
+service: my-node-api
+
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ${env:AWS_REGION}
+  environment:
+    MONGODB_URI: ${env:MONGODB_URI}
+
+functions:
+  app:
+    handler: dist/index.handler
+    events:
+      - http:
+          path: /{proxy+}
+          method: any
+          cors: true
+
+plugins:
+  - serverless-offline
+
+package:
+  individually: true
+  exclude:
+    - node_modules/**
+    - .gitignore
+    - .github/**
+    - README.md
+    - tsconfig.json
+    - src/**
