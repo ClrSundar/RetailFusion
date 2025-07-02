@@ -6,6 +6,8 @@ provider:
   name: aws
   runtime: nodejs18.x
   region: ${env:AWS_REGION}
+  stage: dev
+  httpApi: true
   environment:
     MONGODB_URI: ${env:MONGODB_URI}
 
@@ -13,7 +15,7 @@ functions:
   app:
     handler: dist/index.handler
     events:
-      - http:
+      - httpApi:
           path: /{proxy+}
           method: any
           cors: true

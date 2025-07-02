@@ -1,0 +1,104 @@
+{
+  "/Users/sundara.v.rajendran/Documents/Projects/RetailFusion/server/serverless.yml": {
+    "versionFramework": "4.17.1",
+    "servicePath": "/Users/sundara.v.rajendran/Documents/Projects/RetailFusion/server/serverless.yml",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "my-node-api",
+      "frameworkVersion": "4",
+      "provider": {
+        "name": "aws",
+        "runtime": "nodejs18.x",
+        "region": "us-east-1",
+        "environment": {
+          "MONGODB_URI": "mongodb+srv://clrsundar:YVRQvyJmUC6yEMi9@retailfusion.vadaejz.mongodb.net/?retryWrites=true&w=majority&appName=retailFusion"
+        },
+        "stage": "dev",
+        "versionFunctions": true
+      },
+      "functions": {
+        "app": {
+          "handler": "dist/index.handler",
+          "events": [
+            {
+              "http": {
+                "path": "/{proxy+}",
+                "method": "any",
+                "cors": true
+              }
+            }
+          ],
+          "name": "my-node-api-dev-app"
+        }
+      },
+      "plugins": [
+        "serverless-offline"
+      ],
+      "package": {
+        "individually": true,
+        "exclude": [
+          "node_modules/**",
+          ".gitignore",
+          ".github/**",
+          "README.md",
+          "tsconfig.json",
+          "src/**"
+        ],
+        "artifactsS3KeyDirname": "serverless/my-node-api/dev/code-artifacts"
+      }
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "nodejs18.x",
+      "region": "us-east-1",
+      "environment": {
+        "MONGODB_URI": "mongodb+srv://clrsundar:YVRQvyJmUC6yEMi9@retailfusion.vadaejz.mongodb.net/?retryWrites=true&w=majority&appName=retailFusion"
+      },
+      "stage": "dev",
+      "versionFunctions": true
+    },
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "serviceRawFile": "service: my-node-api\n\nframeworkVersion: '4'\n\nprovider:\n  name: aws\n  runtime: nodejs18.x\n  region: ${env:AWS_REGION}\n  environment:\n    MONGODB_URI: ${env:MONGODB_URI}\n\nfunctions:\n  app:\n    handler: dist/index.handler\n    events:\n      - http:\n          path: /{proxy+}\n          method: any\n          cors: true\n\nplugins:\n  - serverless-offline\n\npackage:\n  individually: true\n  exclude:\n    - node_modules/**\n    - .gitignore\n    - .github/**\n    - README.md\n    - tsconfig.json\n    - src/**",
+    "command": [
+      "info"
+    ],
+    "options": {},
+    "orgId": "67d1f573-14de-4a16-a1b1-8569fbc4acb5",
+    "orgName": "retailfusion",
+    "userId": "d8SZPlPmR08pklJHxC",
+    "userName": "retailfusion",
+    "serviceProviderAwsAccountId": "720319368770",
+    "serviceProviderAwsCfStackName": "my-node-api-dev",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:720319368770:stack/my-node-api-dev/ae3c47e0-4c31-11f0-b99f-0e7c9793a759",
+    "serviceProviderAwsCfStackCreated": "2025-06-18T10:47:50.965Z",
+    "serviceProviderAwsCfStackUpdated": "2025-07-02T07:11:11.398Z",
+    "serviceProviderAwsCfStackStatus": "UPDATE_COMPLETE",
+    "serviceProviderAwsCfStackOutputs": [
+      {
+        "OutputKey": "AppLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:us-east-1:720319368770:function:my-node-api-dev-app:1",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-my-node-api-dev-AppLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "ServiceEndpoint",
+        "OutputValue": "https://dau2adlfw7.execute-api.us-east-1.amazonaws.com/dev",
+        "Description": "URL of the service endpoint",
+        "ExportName": "sls-my-node-api-dev-ServiceEndpoint"
+      },
+      {
+        "OutputKey": "ServerlessDeploymentBucketName",
+        "OutputValue": "my-node-api-dev-serverlessdeploymentbucket-9va9kqhu5a2p",
+        "ExportName": "sls-my-node-api-dev-ServerlessDeploymentBucketName"
+      }
+    ]
+  }
+}
