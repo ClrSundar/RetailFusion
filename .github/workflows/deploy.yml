@@ -66,4 +66,4 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           S3_BUCKET: ${{ secrets.S3_BUCKET }}
         run: |
-          aws s3 sync build/ s3://$S3_BUCKET --delete --region $AWS_REGION
+          aws s3 sync dist/ s3://$S3_BUCKET --delete --region $AWS_REGION
