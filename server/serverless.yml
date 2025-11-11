@@ -1,34 +1,35 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: retailfusion
 service: my-node-api
-
-frameworkVersion: '4'
 
 provider:
   name: aws
   runtime: nodejs18.x
-  region: ${env:AWS_REGION}
-  stage: dev
-  httpApi:
-    cors: true
+  region: us-east-1
   environment:
     MONGODB_URI: ${env:MONGODB_URI}
+    JWT_SECRET: ${env:JWT_SECRET}
+    JWT_EXPIRES_IN: ${env:JWT_EXPIRES_IN}
+    JWT_REFRESH_SECRET: ${env:JWT_REFRESH_SECRET}
+  stage: dev
+  apiGateway:
+    shouldStartNameWithService: true
 
 functions:
   app:
     handler: dist/index.handler
     events:
-      - httpApi:
-          path: /{proxy+}
-          method: '*'
+      - httpApi: '*'
 
 plugins:
   - serverless-offline
 
 package:
-  individually: true
-  exclude:
+  include:
+    - dist/**
     - node_modules/**
+  exclude:
     - .gitignore
-    - .github/**
     - README.md
     - tsconfig.json
     - src/**

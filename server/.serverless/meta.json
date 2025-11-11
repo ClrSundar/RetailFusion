@@ -1,21 +1,24 @@
 {
   "/Users/sundara.v.rajendran/Documents/Projects/RetailFusion/server/serverless.yml": {
-    "versionFramework": "4.17.1",
+    "versionFramework": "4.23.0",
     "servicePath": "/Users/sundara.v.rajendran/Documents/Projects/RetailFusion/server/serverless.yml",
     "serviceConfigFileName": "serverless.yml",
     "service": {
+      "org": "retailfusion",
       "service": "my-node-api",
-      "frameworkVersion": "4",
       "provider": {
         "name": "aws",
         "runtime": "nodejs18.x",
         "region": "us-east-1",
-        "stage": "dev",
-        "httpApi": {
-          "cors": true
-        },
         "environment": {
-          "MONGODB_URI": "mongodb+srv://clrsundar:YVRQvyJmUC6yEMi9@retailfusion.vadaejz.mongodb.net/?retryWrites=true&w=majority&appName=retailFusion"
+          "MONGODB_URI": "mongodb+srv://clrsundar:YVRQvyJmUC6yEMi9@retailfusion.vadaejz.mongodb.net/retail?retryWrites=true&w=majority&appName=retailFusion",
+          "JWT_SECRET": "<REDACTED>",
+          "JWT_EXPIRES_IN": "1h",
+          "JWT_REFRESH_SECRET": "<REDACTED>"
+        },
+        "stage": "dev",
+        "apiGateway": {
+          "shouldStartNameWithService": true
         },
         "versionFunctions": true,
         "compiledCloudFormationTemplate": {
@@ -182,7 +185,7 @@
                   "S3Bucket": {
                     "Ref": "ServerlessDeploymentBucket"
                   },
-                  "S3Key": "serverless/my-node-api/dev/1751441474960-2025-07-02T07:31:14.960Z/app.zip"
+                  "S3Key": "serverless/my-node-api/dev/1762875697614-2025-11-11T15:41:37.614Z/my-node-api.zip"
                 },
                 "Handler": "dist/index.handler",
                 "Runtime": "nodejs18.x",
@@ -191,7 +194,10 @@
                 "Timeout": 6,
                 "Environment": {
                   "Variables": {
-                    "MONGODB_URI": "mongodb+srv://clrsundar:YVRQvyJmUC6yEMi9@retailfusion.vadaejz.mongodb.net/?retryWrites=true&w=majority&appName=retailFusion"
+                    "MONGODB_URI": "mongodb+srv://clrsundar:YVRQvyJmUC6yEMi9@retailfusion.vadaejz.mongodb.net/retail?retryWrites=true&w=majority&appName=retailFusion",
+                    "JWT_SECRET": "<REDACTED>",
+                    "JWT_EXPIRES_IN": "1h",
+                    "JWT_REFRESH_SECRET": "<REDACTED>"
                   }
                 },
                 "Role": {
@@ -205,45 +211,21 @@
                 "AppLogGroup"
               ]
             },
-            "AppLambdaVersionzj0EHzl8lo9kVxyTk1ROiONsy6v6uBfnOb2p4tZJHs": {
+            "AppLambdaVersion028huY8eNjrDHc2PVMvZ17l4x8QUA1NQhnyD5ZNj3U": {
               "Type": "AWS::Lambda::Version",
               "DeletionPolicy": "Retain",
               "Properties": {
                 "FunctionName": {
                   "Ref": "AppLambdaFunction"
                 },
-                "CodeSha256": "306sEBTp5EdXxSwlAVsw2hk9leza8+mQyM20RlBva90="
+                "CodeSha256": "O7HT3yheIuarT0juWJS50lnJqRyaS9bOGSWF3Asgfas="
               }
             },
             "HttpApi": {
               "Type": "AWS::ApiGatewayV2::Api",
               "Properties": {
                 "Name": "dev-my-node-api",
-                "ProtocolType": "HTTP",
-                "CorsConfiguration": {
-                  "AllowCredentials": "<REDACTED>",
-                  "AllowHeaders": [
-                    "Content-Type",
-                    "X-Amz-Date",
-                    "Authorization",
-                    "X-Api-Key",
-                    "X-Amz-Security-Token",
-                    "X-Amz-User-Agent",
-                    "X-Amzn-Trace-Id"
-                  ],
-                  "AllowMethods": [
-                    "OPTIONS",
-                    "GET",
-                    "POST",
-                    "PUT",
-                    "PATCH",
-                    "HEAD",
-                    "DELETE"
-                  ],
-                  "AllowOrigins": [
-                    "*"
-                  ]
-                }
+                "ProtocolType": "HTTP"
               }
             },
             "HttpApiStage": {
@@ -313,13 +295,13 @@
                 "TimeoutInMillis": 30000
               }
             },
-            "HttpApiRouteAnyProxyVar": {
+            "HttpApiRouteDefault": {
               "Type": "AWS::ApiGatewayV2::Route",
               "Properties": {
                 "ApiId": {
                   "Ref": "HttpApi"
                 },
-                "RouteKey": "ANY /{proxy+}",
+                "RouteKey": "$default",
                 "Target": {
                   "Fn::Join": [
                     "/",
@@ -347,7 +329,7 @@
             "AppLambdaFunctionQualifiedArn": {
               "Description": "Current Lambda function version",
               "Value": {
-                "Ref": "AppLambdaVersionzj0EHzl8lo9kVxyTk1ROiONsy6v6uBfnOb2p4tZJHs"
+                "Ref": "AppLambdaVersion028huY8eNjrDHc2PVMvZ17l4x8QUA1NQhnyD5ZNj3U"
               },
               "Export": {
                 "Name": "sls-my-node-api-dev-AppLambdaFunctionQualifiedArn"
@@ -478,52 +460,51 @@
           "handler": "dist/index.handler",
           "events": [
             {
-              "httpApi": {
-                "path": "/{proxy+}",
-                "method": "*"
-              },
-              "resolvedMethod": "ANY",
-              "resolvedPath": "/{proxy+}"
+              "httpApi": "*",
+              "resolvedMethod": "ANY"
             }
           ],
           "name": "my-node-api-dev-app",
-          "package": {
-            "artifact": ".serverless/app.zip"
-          },
+          "package": {},
           "memory": 1024,
           "timeout": 6,
           "runtime": "nodejs18.x",
           "vpc": {},
-          "versionLogicalId": "AppLambdaVersionzj0EHzl8lo9kVxyTk1ROiONsy6v6uBfnOb2p4tZJHs"
+          "versionLogicalId": "AppLambdaVersion028huY8eNjrDHc2PVMvZ17l4x8QUA1NQhnyD5ZNj3U"
         }
       },
       "plugins": [
         "serverless-offline"
       ],
       "package": {
-        "individually": true,
+        "include": [
+          "dist/**",
+          "node_modules/**"
+        ],
         "exclude": [
-          "node_modules/**",
           ".gitignore",
-          ".github/**",
           "README.md",
           "tsconfig.json",
           "src/**"
         ],
         "artifactsS3KeyDirname": "serverless/my-node-api/dev/code-artifacts",
-        "artifactDirectoryName": "serverless/my-node-api/dev/1751441474960-2025-07-02T07:31:14.960Z"
+        "artifact": "/Users/sundara.v.rajendran/Documents/Projects/RetailFusion/server/.serverless/my-node-api.zip",
+        "artifactDirectoryName": "serverless/my-node-api/dev/1762875697614-2025-11-11T15:41:37.614Z"
       }
     },
     "provider": {
       "name": "aws",
       "runtime": "nodejs18.x",
       "region": "us-east-1",
-      "stage": "dev",
-      "httpApi": {
-        "cors": true
-      },
       "environment": {
-        "MONGODB_URI": "mongodb+srv://clrsundar:YVRQvyJmUC6yEMi9@retailfusion.vadaejz.mongodb.net/?retryWrites=true&w=majority&appName=retailFusion"
+        "MONGODB_URI": "mongodb+srv://clrsundar:YVRQvyJmUC6yEMi9@retailfusion.vadaejz.mongodb.net/retail?retryWrites=true&w=majority&appName=retailFusion",
+        "JWT_SECRET": "<REDACTED>",
+        "JWT_EXPIRES_IN": "1h",
+        "JWT_REFRESH_SECRET": "<REDACTED>"
+      },
+      "stage": "dev",
+      "apiGateway": {
+        "shouldStartNameWithService": true
       },
       "versionFunctions": true,
       "compiledCloudFormationTemplate": {
@@ -690,7 +671,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/my-node-api/dev/1751441474960-2025-07-02T07:31:14.960Z/app.zip"
+                "S3Key": "serverless/my-node-api/dev/1762875697614-2025-11-11T15:41:37.614Z/my-node-api.zip"
               },
               "Handler": "dist/index.handler",
               "Runtime": "nodejs18.x",
@@ -699,7 +680,10 @@
               "Timeout": 6,
               "Environment": {
                 "Variables": {
-                  "MONGODB_URI": "mongodb+srv://clrsundar:YVRQvyJmUC6yEMi9@retailfusion.vadaejz.mongodb.net/?retryWrites=true&w=majority&appName=retailFusion"
+                  "MONGODB_URI": "mongodb+srv://clrsundar:YVRQvyJmUC6yEMi9@retailfusion.vadaejz.mongodb.net/retail?retryWrites=true&w=majority&appName=retailFusion",
+                  "JWT_SECRET": "<REDACTED>",
+                  "JWT_EXPIRES_IN": "1h",
+                  "JWT_REFRESH_SECRET": "<REDACTED>"
                 }
               },
               "Role": {
@@ -713,45 +697,21 @@
               "AppLogGroup"
             ]
           },
-          "AppLambdaVersionzj0EHzl8lo9kVxyTk1ROiONsy6v6uBfnOb2p4tZJHs": {
+          "AppLambdaVersion028huY8eNjrDHc2PVMvZ17l4x8QUA1NQhnyD5ZNj3U": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "AppLambdaFunction"
               },
-              "CodeSha256": "306sEBTp5EdXxSwlAVsw2hk9leza8+mQyM20RlBva90="
+              "CodeSha256": "O7HT3yheIuarT0juWJS50lnJqRyaS9bOGSWF3Asgfas="
             }
           },
           "HttpApi": {
             "Type": "AWS::ApiGatewayV2::Api",
             "Properties": {
               "Name": "dev-my-node-api",
-              "ProtocolType": "HTTP",
-              "CorsConfiguration": {
-                "AllowCredentials": "<REDACTED>",
-                "AllowHeaders": [
-                  "Content-Type",
-                  "X-Amz-Date",
-                  "Authorization",
-                  "X-Api-Key",
-                  "X-Amz-Security-Token",
-                  "X-Amz-User-Agent",
-                  "X-Amzn-Trace-Id"
-                ],
-                "AllowMethods": [
-                  "OPTIONS",
-                  "GET",
-                  "POST",
-                  "PUT",
-                  "PATCH",
-                  "HEAD",
-                  "DELETE"
-                ],
-                "AllowOrigins": [
-                  "*"
-                ]
-              }
+              "ProtocolType": "HTTP"
             }
           },
           "HttpApiStage": {
@@ -821,13 +781,13 @@
               "TimeoutInMillis": 30000
             }
           },
-          "HttpApiRouteAnyProxyVar": {
+          "HttpApiRouteDefault": {
             "Type": "AWS::ApiGatewayV2::Route",
             "Properties": {
               "ApiId": {
                 "Ref": "HttpApi"
               },
-              "RouteKey": "ANY /{proxy+}",
+              "RouteKey": "$default",
               "Target": {
                 "Fn::Join": [
                   "/",
@@ -855,7 +815,7 @@
           "AppLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "AppLambdaVersionzj0EHzl8lo9kVxyTk1ROiONsy6v6uBfnOb2p4tZJHs"
+              "Ref": "AppLambdaVersion028huY8eNjrDHc2PVMvZ17l4x8QUA1NQhnyD5ZNj3U"
             },
             "Export": {
               "Name": "sls-my-node-api-dev-AppLambdaFunctionQualifiedArn"
@@ -990,7 +950,7 @@
       "serviceProvider": null,
       "instanceParameters": null
     },
-    "serviceRawFile": "service: my-node-api\n\nframeworkVersion: '4'\n\nprovider:\n  name: aws\n  runtime: nodejs18.x\n  region: ${env:AWS_REGION}\n  stage: dev\n  httpApi:\n    cors: true\n  environment:\n    MONGODB_URI: ${env:MONGODB_URI}\n\nfunctions:\n  app:\n    handler: dist/index.handler\n    events:\n      - httpApi:\n          path: /{proxy+}\n          method: '*'\n\nplugins:\n  - serverless-offline\n\npackage:\n  individually: true\n  exclude:\n    - node_modules/**\n    - .gitignore\n    - .github/**\n    - README.md\n    - tsconfig.json\n    - src/**",
+    "serviceRawFile": "# \"org\" ensures this Service is used with the correct Serverless Framework Access Key.\norg: retailfusion\nservice: my-node-api\n\nprovider:\n  name: aws\n  runtime: nodejs18.x\n  region: us-east-1\n  environment:\n    MONGODB_URI: ${env:MONGODB_URI}\n    JWT_SECRET: ${env:JWT_SECRET}\n    JWT_EXPIRES_IN: ${env:JWT_EXPIRES_IN}\n    JWT_REFRESH_SECRET: ${env:JWT_REFRESH_SECRET}\n  stage: dev\n  apiGateway:\n    shouldStartNameWithService: true\n\nfunctions:\n  app:\n    handler: dist/index.handler\n    events:\n      - httpApi: '*'\n\nplugins:\n  - serverless-offline\n\npackage:\n  include:\n    - dist/**\n    - node_modules/**\n  exclude:\n    - .gitignore\n    - README.md\n    - tsconfig.json\n    - src/**\n",
     "command": [
       "deploy"
     ],
@@ -1003,18 +963,18 @@
     "serviceProviderAwsCfStackName": "my-node-api-dev",
     "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:720319368770:stack/my-node-api-dev/ae3c47e0-4c31-11f0-b99f-0e7c9793a759",
     "serviceProviderAwsCfStackCreated": "2025-06-18T10:47:50.965Z",
-    "serviceProviderAwsCfStackUpdated": "2025-07-02T07:29:17.873Z",
+    "serviceProviderAwsCfStackUpdated": "2025-11-11T15:30:33.260Z",
     "serviceProviderAwsCfStackStatus": "UPDATE_COMPLETE",
     "serviceProviderAwsCfStackOutputs": [
       {
         "OutputKey": "AppLambdaFunctionQualifiedArn",
-        "OutputValue": "arn:aws:lambda:us-east-1:720319368770:function:my-node-api-dev-app:3",
+        "OutputValue": "arn:aws:lambda:us-east-1:720319368770:function:my-node-api-dev-app:11",
         "Description": "Current Lambda function version",
         "ExportName": "sls-my-node-api-dev-AppLambdaFunctionQualifiedArn"
       },
       {
         "OutputKey": "HttpApiId",
-        "OutputValue": "yeayglawv9",
+        "OutputValue": "gvyfux1f7h",
         "Description": "Id of the HTTP API",
         "ExportName": "sls-my-node-api-dev-HttpApiId"
       },
@@ -1025,7 +985,7 @@
       },
       {
         "OutputKey": "HttpApiUrl",
-        "OutputValue": "https://yeayglawv9.execute-api.us-east-1.amazonaws.com",
+        "OutputValue": "https://gvyfux1f7h.execute-api.us-east-1.amazonaws.com",
         "Description": "URL of the HTTP API",
         "ExportName": "sls-my-node-api-dev-HttpApiUrl"
       }
@@ -1194,7 +1154,7 @@
               "S3Bucket": {
                 "Ref": "ServerlessDeploymentBucket"
               },
-              "S3Key": "serverless/my-node-api/dev/1751441474960-2025-07-02T07:31:14.960Z/app.zip"
+              "S3Key": "serverless/my-node-api/dev/1762875697614-2025-11-11T15:41:37.614Z/my-node-api.zip"
             },
             "Handler": "dist/index.handler",
             "Runtime": "nodejs18.x",
@@ -1203,7 +1163,10 @@
             "Timeout": 6,
             "Environment": {
               "Variables": {
-                "MONGODB_URI": "mongodb+srv://clrsundar:YVRQvyJmUC6yEMi9@retailfusion.vadaejz.mongodb.net/?retryWrites=true&w=majority&appName=retailFusion"
+                "MONGODB_URI": "mongodb+srv://clrsundar:YVRQvyJmUC6yEMi9@retailfusion.vadaejz.mongodb.net/retail?retryWrites=true&w=majority&appName=retailFusion",
+                "JWT_SECRET": "<REDACTED>",
+                "JWT_EXPIRES_IN": "1h",
+                "JWT_REFRESH_SECRET": "<REDACTED>"
               }
             },
             "Role": {
@@ -1217,44 +1180,21 @@
             "AppLogGroup"
           ]
         },
-        "AppLambdaVersionzj0EHzl8lo9kVxyTk1ROiONsy6v6uBfnOb2p4tZJHs": {
+        "AppLambdaVersion028huY8eNjrDHc2PVMvZ17l4x8QUA1NQhnyD5ZNj3U": {
           "Type": "AWS::Lambda::Version",
           "DeletionPolicy": "Retain",
           "Properties": {
             "FunctionName": {
               "Ref": "AppLambdaFunction"
             },
-            "CodeSha256": "306sEBTp5EdXxSwlAVsw2hk9leza8+mQyM20RlBva90="
+            "CodeSha256": "O7HT3yheIuarT0juWJS50lnJqRyaS9bOGSWF3Asgfas="
           }
         },
         "HttpApi": {
           "Type": "AWS::ApiGatewayV2::Api",
           "Properties": {
             "Name": "dev-my-node-api",
-            "ProtocolType": "HTTP",
-            "CorsConfiguration": {
-              "AllowHeaders": [
-                "Content-Type",
-                "X-Amz-Date",
-                "Authorization",
-                "X-Api-Key",
-                "X-Amz-Security-Token",
-                "X-Amz-User-Agent",
-                "X-Amzn-Trace-Id"
-              ],
-              "AllowMethods": [
-                "OPTIONS",
-                "GET",
-                "POST",
-                "PUT",
-                "PATCH",
-                "HEAD",
-                "DELETE"
-              ],
-              "AllowOrigins": [
-                "*"
-              ]
-            }
+            "ProtocolType": "HTTP"
           }
         },
         "HttpApiStage": {
@@ -1324,13 +1264,13 @@
             "TimeoutInMillis": 30000
           }
         },
-        "HttpApiRouteAnyProxyVar": {
+        "HttpApiRouteDefault": {
           "Type": "AWS::ApiGatewayV2::Route",
           "Properties": {
             "ApiId": {
               "Ref": "HttpApi"
             },
-            "RouteKey": "ANY /{proxy+}",
+            "RouteKey": "$default",
             "Target": {
               "Fn::Join": [
                 "/",
@@ -1358,7 +1298,7 @@
         "AppLambdaFunctionQualifiedArn": {
           "Description": "Current Lambda function version",
           "Value": {
-            "Ref": "AppLambdaVersionzj0EHzl8lo9kVxyTk1ROiONsy6v6uBfnOb2p4tZJHs"
+            "Ref": "AppLambdaVersion028huY8eNjrDHc2PVMvZ17l4x8QUA1NQhnyD5ZNj3U"
           },
           "Export": {
             "Name": "sls-my-node-api-dev-AppLambdaFunctionQualifiedArn"
